@@ -4,6 +4,7 @@ from rest_framework.validators import ValidationError
 from rest_framework.authtoken.models import Token
 from rest_framework import serializers
 import re
+
 class UserSerializer(ModelSerializer):
     email = serializers.EmailField(required=True)
     class Meta:
