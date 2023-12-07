@@ -3,27 +3,29 @@ from rest_framework.views import APIView
 from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework import viewsets
 
 from django.urls import path
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
-from .models import Post, Comment, UserFollow
-from .serializers import PostSerializer, CommentSerializer, UserFollowSerializer
+from .models import Post, Comment, UserFollow, Bookmark
+from .serializers import PostSerializer, CommentSerializer, UserFollowSerializer, BookmarkSerializer
 
 class PostList(generics.ListCreateAPIView):
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     
 class PostDetails(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    
-    
-    
+
     
 # THE COMMENTS SECTION
 class CreateComment(generics.CreateAPIView):
     serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
     
     def perform_create(self, serializer):
         pk = self.kwargs.get('pk')
@@ -32,6 +34,7 @@ class CreateComment(generics.CreateAPIView):
         
 class CommentList(generics.ListAPIView):
     serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
         pk = self.kwargs['pk']
@@ -39,12 +42,16 @@ class CommentList(generics.ListAPIView):
     
     
 class CommentDetails(generics.RetrieveUpdateDestroyAPIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     
 
 
 class LikeUnlike(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, post_id):
         user = request.user
 
@@ -63,6 +70,8 @@ class LikeUnlike(APIView):
     
     
 class FollowUnfollow(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
     def post(self, request, user_id):
         try:
             user_to_click = User.objects.get(pk=user_id)
@@ -92,3 +101,36 @@ class FollowUnfollow(APIView):
         serializer = UserFollowSerializer(user_profile)
         print(serializer.data)
         return Response(serializer.data)
+    
+
+class BookmarkListView(generics.ListAPIView):
+    queryset = Bookmark.objects.all()
+    serializer_class = BookmarkSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+
+class BookmarkCreateView(generics.CreateAPIView):
+    serializer_class = BookmarkSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+  
+    def get_queryset(self):
+        return Bookmark.objects.filter(bookmarked_by=self.request.user)
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        post = serializer.validated_data['post']
+        existing_bookmark = Bookmark.objects.filter(bookmarked_by=user, post=post).first()
+        print(existing_bookmark)
+        if existing_bookmark:
+            existing_bookmark.delete()
+            response_data = {"detail": "Bookmark already exists for this post."}
+            return Response(response_data,
+                            status=status.HTTP_400_BAD_REQUEST)
+        serializer.save(bookmarked_by=user)
+        response_data = {"detail": "Bookmark created successfully"}
+        return Response(response_data,
+                        status=status.HTTP_201_CREATED)
+        
+
+

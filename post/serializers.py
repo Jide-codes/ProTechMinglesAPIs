@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from django.contrib.auth.models import User
-from post.models import Post, Comment, UserFollow
+from post.models import Post, Comment, UserFollow, Bookmark
 
 
 
@@ -36,33 +36,35 @@ class UserSerializer(serializers.ModelSerializer):
      
 
      
-# class BookmarkSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Bookmark
-#         fields = "__all__"
+class BookmarkSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bookmark
+        fields = ['id', 'post', 'added_at']
         
         
 class CommentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comment
-        exclude = ('post',)
-        # fields = "__all__"
+        fields = "__all__"
         
         
 class PostSerializer(serializers.ModelSerializer):
-    comments = CommentSerializer(many=True, read_only=True)
-    # bookmarks = BookmarkSerializer(many=True, read_only=True)
-    kudos_count = serializers.SerializerMethodField()
+    total_kudos = serializers.SerializerMethodField()
+    total_comments = serializers.SerializerMethodField()
+    total_bookmarks = serializers.SerializerMethodField()
     class Meta:
         model = Post
         exclude = ('kudos',)
         # fields = "__all__"
         
         
-    def get_kudos_count(self, object):
+    def get_total_kudos(self, object):
         return object.total_kudos()
     
-    # def get_bookmark_count(self, object):
-    #     return object.total_bookmarks()
+    def get_total_comments(self, object):
+        return object.total_comments()
+    
+    def get_total_bookmarks(self, object):
+         return object.total_bookmarks()
     

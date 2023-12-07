@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # Apps
     "userprofiles",
     "post",
+    "community",
     
     # Dependencies
     "rest_framework",

@@ -1,7 +1,15 @@
-from django.urls import path
-from .views import (PostList, PostDetails, CreateComment,CommentList, CommentDetails,LikeUnlike,FollowUnfollow)
+from django.urls import path, include
+from .views import (PostList,PostDetails,CreateComment,CommentList, 
+                               CommentDetails,LikeUnlike,FollowUnfollow,
+                               BookmarkListView, BookmarkCreateView)
+from rest_framework.routers import DefaultRouter
+
+# router = DefaultRouter()
+# router.register('posts', PostViewSet, basename='post')
 
 urlpatterns = [
+    # path('', include(router.urls)),
+    
     path("post-list/", PostList.as_view(), name="post-list"),
     path("post-details/<int:pk>/", PostDetails.as_view(), name="post-detail"),
     
@@ -12,5 +20,9 @@ urlpatterns = [
     
     
     path("post/kudos/<int:post_id>/", LikeUnlike.as_view(), name='like_unlike'),  
-    path("user/<int:user_id>/follow/", FollowUnfollow.as_view(), name="follow_unfollow" )
+    path("user/<int:user_id>/follow/", FollowUnfollow.as_view(), name="follow_unfollow" ),
+    
+     path('bookmarks/', BookmarkListView.as_view(), name='bookmark-list'),
+    path('post/bookmark/', BookmarkCreateView.as_view(), name='bookmark-create'),
+    # path('bookmark/<int:post_id>/delete', BookmarkDeleteView.as_view(), name='bookmark-delete'),
 ]

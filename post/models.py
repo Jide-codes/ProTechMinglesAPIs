@@ -16,6 +16,11 @@ class Post(models.Model):
     def total_kudos(self):
         return self.kudos.count()
     
+    def total_comments(self):
+        return self.comments.count()
+    
+    def total_bookmarks(self):
+        return self.bookmarks.count()
     
     
 class Comment(models.Model):
@@ -27,9 +32,7 @@ class Comment(models.Model):
     def __str__(self):
         return f"{self.body[:20]}... ({self.created.strftime('%Y-%m-%d %H:%M:%S')})"
         
-        
-    # def total_comments(self):
-    #     return self.post.comments.count()
+
     
     
 class UserFollow(models.Model):
@@ -49,3 +52,17 @@ class UserFollow(models.Model):
         for users in self.user.current_user_followers.all():
             followers_list.append(users.id)
         return followers_list
+    
+    
+class Bookmark(models.Model):
+        post = models.ForeignKey(Post, related_name='bookmarks', on_delete=models.CASCADE)
+        bookmarked_by = models.ForeignKey(User, related_name='bookmarked_posts', on_delete=models.CASCADE)
+        added_at = models.DateTimeField(auto_now_add=True)
+        
+        # class Meta:
+        #     unique_together = ['post', 'bookmarked_by']
+            
+        def __str__(self):
+            return f"{self.post}"
+        
+       

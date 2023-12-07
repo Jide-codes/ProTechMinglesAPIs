@@ -53,7 +53,28 @@ Authorization: Token 24dd63a568cce27693b5710d7afd6f8c953e7de0
 
 olajide
 ### GET REQUEST
-POST  http://127.0.0.1:8000/api-v1/user/3/follow/
+GET      http://127.0.0.1:8000/api-v1/bookmarks/
+content-type: application/json
+Authorization: Token c64b12ff84bd41f761aedd4cd0479209a45d6ffb
+
+{
+     "post": 3
+}
+
+
+olajide
+### GET REQUEST
+GET  http://127.0.0.1:8000/api-v1/community/1/posts/
+content-type: application/json
+Authorization: Token c64b12ff84bd41f761aedd4cd0479209a45d6ffb
+
+
+
+
+
+olajide
+### GET REQUEST
+POST  http://127.0.0.1:8000/api-v1/community/2/create-post/
 content-type: application/json
 Authorization: Token c64b12ff84bd41f761aedd4cd0479209a45d6ffb
 
