@@ -39,10 +39,11 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     # Apps
+    'event',
     "userprofiles",
     "post",
     "community",
-    
+
     # Dependencies
     "rest_framework",
     "rest_framework.authtoken"

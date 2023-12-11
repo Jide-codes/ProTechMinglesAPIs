@@ -53,8 +53,8 @@ class ProfileView(ListCreateAPIView):
 
     def create(self, request, *args, **kwargs):
         user = request.data['user']
-        picture = request.data['picture']
-        bio = request.data['bio']
+        picture = request.data['picture'] or None
+        bio = request.data['bio'] or None
         user_profile = Profile.objects.filter(user=user)
         if user_profile:
             user_profile.update(picture=picture, bio=bio)
@@ -62,8 +62,3 @@ class ProfileView(ListCreateAPIView):
         Profile.objects.create(user_id=user, picture=picture, bio=bio)
 
         return Response('Profile created successfully', status=status.HTTP_200_OK)
-
-
-# def create_update_profile(request, id):
-#     queryset = Profile.objects.filter(user_id=id)
-#     serializer = ProfileSerializer

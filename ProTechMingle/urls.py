@@ -6,5 +6,6 @@ urlpatterns = [
     path('api-v1/login/', include('rest_framework.urls')),
     path('accounts/', include("userprofiles.urls")),
     path('api-v1/', include("post.urls")),
-    path('api-v1/', include('community.urls'))
+    path('api-v1/', include('community.urls')),
+    path('api/event/', include('event.urls')),
 ]
