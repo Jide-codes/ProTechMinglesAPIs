@@ -2,10 +2,10 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.permissions import *
-from rest_framework.generics import GenericAPIView, ListAPIView, ListCreateAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView, ListCreateAPIView, RetrieveUpdateAPIView
 from django.contrib.auth.models import User
 from rest_framework import status
-from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.parsers import FormParser, MultiPartParser, JSONParser
 
 from .serializers import *
 from .models import *
@@ -49,16 +49,23 @@ class UserList(ListAPIView):
 class ProfileView(ListCreateAPIView):
     queryset = Profile.objects.all()
     serializer_class = ProfileSerializer
-    parser_classes = (MultiPartParser, FormParser)
+    parser_classes = (MultiPartParser, FormParser, JSONParser)
 
-    def create(self, request, *args, **kwargs):
-        user = request.data['user']
-        picture = request.data['picture'] or None
-        bio = request.data['bio'] or None
-        user_profile = Profile.objects.filter(user=user)
-        if user_profile:
-            user_profile.update(picture=picture, bio=bio)
-            return Response('Profile UPDATED successfully', status=status.HTTP_200_OK)
-        Profile.objects.create(user_id=user, picture=picture, bio=bio)
+    # def create(self, request, *args, **kwargs):
+    #     user = request.data['user']
+    #     picture = request.data['picture'] or None
+    #     bio = request.data['bio'] or None
+    #     user_profile = Profile.objects.filter(user=user)
+    #     if user_profile:
+    #         user_profile.update(picture=picture, bio=bio)
+    #         return Response('Profile UPDATED successfully', status=status.HTTP_200_OK)
+    #     Profile.objects.create(user_id=user, picture=picture, bio=bio)
 
-        return Response('Profile created successfully', status=status.HTTP_200_OK)
+    #     return Response('Profile created successfully', status=status.HTTP_200_OK)
+
+
+class UpdateUserProfile(RetrieveUpdateAPIView):
+    serializer_class = ProfileSerializer
+
+    def get_object(self):
+        return self.request.user.profile
