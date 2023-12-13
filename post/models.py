@@ -2,7 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 
 class Post(models.Model):
-    body = models.TextField(blank=True)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="post")
+    body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     kudos = models.ManyToManyField(User, related_name='post_kudos', blank=True)
@@ -12,6 +13,10 @@ class Post(models.Model):
         
     def __str__(self):
         return f"{self.body[:20]}... ({self.created.strftime('%Y-%m-%d %H:%M:%S')})"
+    
+    @property
+    def display(self):
+        return f"{self.body[:20]}....."
         
     def total_kudos(self):
         return self.kudos.count()
@@ -24,8 +29,9 @@ class Post(models.Model):
     
     
 class Comment(models.Model):
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="comments")
     post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments')
-    body = models.TextField(blank=True)
+    body = models.TextField()
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
         
@@ -48,10 +54,9 @@ class UserFollow(models.Model):
         return self.user.current_user_followers.count()
     
     def currentUser_followers_list(self):
-        followers_list = []
-        for users in self.user.current_user_followers.all():
-            followers_list.append(users.id)
-        return followers_list
+        return self.user.current_user_followers.all()
+        
+        
     
     
 class Bookmark(models.Model):

@@ -10,11 +10,11 @@ from rest_framework.routers import DefaultRouter
 urlpatterns = [
     # path('', include(router.urls)),
     
-    path("post-list/", PostList.as_view(), name="post-list"),
+    path("posts/", PostList.as_view(), name="post-list"),
     path("post-details/<int:pk>/", PostDetails.as_view(), name="post-detail"),
     
     
-    path("post/<int:pk>/create-comment/", CreateComment.as_view(), name='create_comment'),
+    path("post/<int:post_id>/create-comment/", CreateComment.as_view(), name='create_comment'),
     path("post/<int:pk>/comments/", CommentList.as_view(), name="comments"),
     path("post/comment/<int:pk>/", CommentDetails.as_view(), name="comment-details"),
     

@@ -11,10 +11,16 @@ from django.contrib.auth.models import User
 from .models import Post, Comment, UserFollow, Bookmark
 from .serializers import PostSerializer, CommentSerializer, UserFollowSerializer, BookmarkSerializer
 
+from notification.models import Notification
+
 class PostList(generics.ListCreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     queryset = Post.objects.all()
     serializer_class = PostSerializer
+    
+    def perform_create(self, serializer):
+        user = self.request.user
+        serializer.save(author=user)
     
 class PostDetails(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = [permissions.IsAuthenticated]
@@ -28,10 +34,17 @@ class CreateComment(generics.CreateAPIView):
     permission_classes = [permissions.IsAuthenticated]
     
     def perform_create(self, serializer):
-        pk = self.kwargs.get('pk')
-        post = Post.objects.get(pk=pk)
-        serializer.save(post=post)
+        post_id = self.kwargs.get('post_id')
+        post = get_object_or_404(Post, pk=post_id)
+        comment = serializer.save(author=self.request.user, post=post)
         
+        if self.request.user != post.author:
+            Notification.objects.create(
+                user=post.author,
+                message=f'{self.request.user.username} commented on your post: {post.display}'
+            )
+        return Response({'detail': 'Comment created successfully'})
+    
 class CommentList(generics.ListAPIView):
     serializer_class = CommentSerializer
     permission_classes = [permissions.IsAuthenticated]
@@ -64,6 +77,10 @@ class LikeUnlike(APIView):
             post.kudos.remove(user)
         else:
             post.kudos.add(user)
+            Notification.objects.create(
+                user=post.author,
+                message=f"{request.user.username} liked your post: {post.display}"
+            )
 
         serializer = PostSerializer(post)
         return Response(serializer.data)
@@ -87,6 +104,10 @@ class FollowUnfollow(APIView):
             
         else:
             user_profile.following.add(user_to_click)
+            Notification.objects.create(
+                user=user_to_click,
+                message=f"{request.user.username} started following you"
+            )
 
         # fans_count = user_profile.total_user_followers_count()
         # fans_list = user_profile.user_followers_list()
@@ -134,3 +155,5 @@ class BookmarkCreateView(generics.CreateAPIView):
         
 
 
+class SharePostToCommunity(generics.CreateAPIView):
+    pass
