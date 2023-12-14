@@ -19,7 +19,7 @@ class TestApi(GenericAPIView):
     def get(self, request, *args, **kwargs):
         print(request.user)
         return Response({
-            "detail": "User is authenticted!"
+            "detail": "User is authenticated!"
         })
 
 
@@ -36,6 +36,7 @@ class SignUpView(GenericAPIView):
 
             user = serializer.save()
             token = Token.objects.get(user=user)
+            Profile.objects.create(user=user)
             return Response({'token': token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
