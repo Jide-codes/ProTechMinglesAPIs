@@ -22,7 +22,7 @@ class Profile(models.Model):
     
 
     def __str__(self):
-        return f"{self.first_name} {self.last_name}"
+        return f"{self.user}"
 
 
 class WorkExperience(models.Model):
@@ -34,9 +34,9 @@ class WorkExperience(models.Model):
     is_currently_working = models.BooleanField(default=False)
     responsibilty = models.TextField()
     
-    
+
     def __str__(self):
-        return self.title
+        return f"{self.profile.user} Working Experience"
 
 
 class Education(models.Model):
@@ -48,4 +48,4 @@ class Education(models.Model):
     end_date = models.DateField(null=True)
     
     def __str__(self):
-        return self.school_name
+        return f"{self.profile.user} Education details"

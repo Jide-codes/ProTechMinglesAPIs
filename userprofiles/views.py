@@ -2,17 +2,20 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.authentication import TokenAuthentication, SessionAuthentication
 from rest_framework.permissions import *
-from rest_framework.generics import GenericAPIView
+from rest_framework import generics 
 from rest_framework.views import APIView
+from rest_framework import generics
 from django.contrib.auth.models import User
 from rest_framework import status
+from rest_framework import permissions
+from rest_framework.exceptions import PermissionDenied
 
 
 from .serializers import *
 from .models import *
 
 
-class TestApi(GenericAPIView):
+class TestApi(generics.GenericAPIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
@@ -23,7 +26,7 @@ class TestApi(GenericAPIView):
         })
 
 
-class SignUpView(GenericAPIView):
+class SignUpView(generics.GenericAPIView):
     def post(self, request):
 
         if request.data["password"] != request.data["confirm_password"]:
@@ -36,7 +39,9 @@ class SignUpView(GenericAPIView):
 
             user = serializer.save()
             token = Token.objects.get(user=user)
-            Profile.objects.create(user=user)
+            profile=Profile.objects.create(user=user)
+            WorkExperience.objects.create(profile=profile)
+            Education.objects.create(profile=profile)
             return Response({'token': token.key}, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -45,3 +50,50 @@ class LogOutView(APIView):
     def post(self, request):
         request.user.auth_token.delete()
         return Response(status=status.HTTP_200_OK)
+
+
+
+class ProfilesView(generics.RetrieveUpdateAPIView):
+    queryset = Profile.objects.all()
+    serializer_class = ProfileSerializer
+    
+    
+    def perform_update(self,  serializer):
+        pk = self.kwargs['pk']
+        profile = Profile.objects.get(id=pk)
+        
+        if profile.user != self.request.user:
+           raise  PermissionDenied("You don't have permission to update this profile")
+       
+        serializer.save()
+    
+    
+    
+class WorkExperienceView(generics.RetrieveUpdateAPIView):
+    queryset = WorkExperience.objects.all()
+    serializer_class = WorkExperienceSerializer
+    
+    
+    def perform_update(self,  serializer):
+        pk = self.kwargs['pk']
+        work_profile = WorkExperience.objects.get(id=pk)
+        
+        if work_profile.profile.user != self.request.user:
+           raise  PermissionDenied("You don't have permission to update this profile")
+       
+        serializer.save()
+        
+        
+class EducationView(generics.RetrieveUpdateAPIView):
+    queryset = Education.objects.all()
+    serializer_class = EducationSerializer
+    
+    
+    def perform_update(self,  serializer):
+        pk = self.kwargs['pk']
+        education_profile = WorkExperience.objects.get(id=pk)
+        
+        if education_profile.profile.user != self.request.user:
+           raise  PermissionDenied("You don't have permission to update this profile")
+       
+        serializer.save()

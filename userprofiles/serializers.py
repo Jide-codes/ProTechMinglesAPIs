@@ -1,4 +1,4 @@
-from rest_framework.serializers import ModelSerializer
+
 from django.contrib.auth.models import User
 from rest_framework.validators import ValidationError
 from rest_framework.authtoken.models import Token
@@ -8,7 +8,7 @@ import re
 from .models import *
 
 
-class UserSerializer(ModelSerializer):
+class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(required=True)
 
     class Meta:
@@ -43,8 +43,37 @@ class UserSerializer(ModelSerializer):
         token, created = Token.objects.get_or_create(user=user)
         return user
 
+class SkillSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skill
+        fields = '__all__'
+
 
 class ProfileSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    skills = SkillSerializer(many=True, read_only=True)
     class Meta:
         model = Profile
         fields = '__all__'
+
+
+class WorkExperienceSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+    
+    class Meta:
+        model = WorkExperience
+        fields = '__all__'
+        
+        
+class EducationSerializer(serializers.ModelSerializer):
+    profile = ProfileSerializer(read_only=True)
+    
+    class Meta:
+        model = Education
+        fields = '__all__'
+        
+        
+
+        
+        
+        

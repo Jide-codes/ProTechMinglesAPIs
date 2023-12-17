@@ -8,4 +8,5 @@ urlpatterns = [
     path('api-v1/', include('community.urls')),
     path('api-v1/', include('job.urls')),
     path('api-v1/', include("notification.urls")),
+    path('api-v1/', include("event.urls"))
 ]
