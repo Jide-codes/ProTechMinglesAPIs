@@ -9,7 +9,7 @@ from django.urls import path
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.models import User
 from .models import Post, Comment, UserFollow, Bookmark
-from .serializers import PostSerializer, CommentSerializer, UserFollowSerializer, BookmarkSerializer
+from .serializers import PostSerializer, CommentSerializer, UserFollowSerializer, BookmarkSerializer, UserSerializer
 
 from notification.models import Notification
 
@@ -107,21 +107,17 @@ class FollowUnfollow(APIView):
                 message=f"{request.user.username} started following you"
             )
 
-        # fans_count = user_profile.total_user_followers_count()
-        # fans_list = user_profile.user_followers_list()
-
-        # response_data = {
-        #     "fans_count": fans_count,
-        #     "fans_list": fans_list,
-        #     "user_profile": user_profile
-        # }
-
-        # print("response_data", fans_list)
         serializer = UserFollowSerializer(user_profile)
         print(serializer.data)
         return Response(serializer.data)
-
-
+    
+class FollowersList(generics.ListAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        return User.objects.filter(current_user_followers__following=self.request.user)
+    
 class BookmarkListView(generics.ListAPIView):
     queryset = Bookmark.objects.all()
     serializer_class = BookmarkSerializer

@@ -5,6 +5,7 @@ from django.contrib.auth.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
+        ref_name = "EventUserSerializer"
         model = User
         fields = ('id', 'username')
 
@@ -13,6 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
 class EventSerializer(serializers.ModelSerializer):
     created_by = UserSerializer(read_only=True)
     class Meta:
+        
         model = Event
         fields = "__all__"
 

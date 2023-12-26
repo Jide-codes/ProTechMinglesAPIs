@@ -9,13 +9,15 @@ from django.contrib.auth.models import User
 from rest_framework import status
 from rest_framework import permissions
 from rest_framework.exceptions import PermissionDenied
+from rest_framework_simplejwt.tokens import RefreshToken
+
 
 
 from .serializers import *
 from .models import *
 
 
-class TestApi(generics.GenericAPIView):
+class TestApi(APIView):
     permission_classes = [IsAuthenticated]
     authentication_classes = [TokenAuthentication, SessionAuthentication]
 
@@ -28,22 +30,45 @@ class TestApi(generics.GenericAPIView):
 
 class SignUpView(generics.GenericAPIView):
     def post(self, request):
-
-        if request.data["password"] != request.data["confirm_password"]:
-            return Response({
-                "error": "Password and confirm password does not match"},
-                status=status.HTTP_400_BAD_REQUEST)
+         
         serializer = UserSerializer(data=request.data)
-
+        
+        data = {}
+        
         if serializer.is_valid():
+            account = serializer.save()
+            
+            data['response'] = "Registration Successful !"
+            data['username'] = account.username
+            data['email'] = account.email
+        
+        else:
+            data = serializer.errors
+            
+        return Response(data)
 
-            user = serializer.save()
-            token = Token.objects.get(user=user)
-            profile=Profile.objects.create(user=user)
-            WorkExperience.objects.create(profile=profile)
-            Education.objects.create(profile=profile)
-            return Response({'token': token.key}, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # if request.data["password"] != request.data["confirm_password"]:
+        #     return Response({
+        #         "error": "Password and confirm password does not match"},
+        #         status=status.HTTP_400_BAD_REQUEST)
+        # serializer = UserSerializer(data=request.data)
+
+        # if serializer.is_valid():
+
+        #     user = serializer.save()
+        #     # token = Token.objects.get(user=user)
+        #     refresh = RefreshToken.for_user(user=user)
+        #     token =  {
+        #                     'refresh': str(refresh),
+        #                     'access': str(refresh.access_token),
+        #                 }
+
+        #     # profile=Profile.objects.create(user=user)
+        #     # WorkExperience.objects.create(profile=profile)
+        #     # Education.objects.create(profile=profile)
+        #     # return Response(refresh, status=status.HTTP_201_CREATED)
+        # return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogOutView(APIView):
