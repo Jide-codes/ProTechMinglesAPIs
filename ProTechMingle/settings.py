@@ -146,15 +146,15 @@ WSGI_APPLICATION = 'ProTechMingle.wsgi.application'
 # }
 
 DATABASES = {
-    'default': 
-        # 'ENGINE':'django.db.backends.postgresql',
-        # 'NAME': 'protechmingledb',
-        # 'USER': 'protechmingledb_user',
-        # 'PASSWORD': 'qi6Tblomtw1r1PQVXho0A7ut8fgvFiIq',
-        # 'HOST': 'postgres://protechmingledb_user:qi6Tblomtw1r1PQVXho0A7ut8fgvFiIq@dpg-cm5jvaen7f5s73c5svm0-a.oregon-postgres.render.com/protechmingledb',
-        # 'PORT': '5432',
-        dj_database_url.config(default=os.getenv('DATABASE_URL'))
-    
+    'default': {
+        'ENGINE':'django.db.backends.postgresql',
+        'NAME': 'railway',
+        'USER': 'postgres',
+        'PASSWORD': 'D*Cf2-121CdD-146FDDCfe*4Adcad5B2',
+        'HOST': 'monorail.proxy.rlwy.net',
+        'PORT': '5432',
+      
+    }
 }
 
 
