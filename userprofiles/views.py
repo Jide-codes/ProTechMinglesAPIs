@@ -37,6 +37,9 @@ class SignUpView(generics.GenericAPIView):
         
         if serializer.is_valid():
             account = serializer.save()
+            profile=Profile.objects.create(user=account)
+            WorkExperience.objects.create(profile=profile)
+            Education.objects.create(profile=profile)
             
             data['response'] = "Registration Successful !"
             data['username'] = account.username
