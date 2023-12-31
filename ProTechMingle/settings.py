@@ -22,9 +22,9 @@ DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 # DEBUG = False
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+# ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
-# ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ["protechmingles.onrender.com", "localhost"]
 
 
 # Application definition
