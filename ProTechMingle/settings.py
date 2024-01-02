@@ -55,6 +55,7 @@ THIRD_PARTY_APPS = [
     "django_filters",
     'drf_yasg',
     'whitenoise'
+    'corsheaders'
 ]
 
 INSTALLED_APPS +=LOCAL_APPS + THIRD_PARTY_APPS
@@ -112,6 +113,7 @@ CORS_ALLOW_METHODS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorMiddleware',
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
