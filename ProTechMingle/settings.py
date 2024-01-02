@@ -24,9 +24,9 @@ DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
 # ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
-ALLOWED_HOSTS = ["https://protechmingles.onrender.com"]
+ALLOWED_HOSTS = ["www.protechmingles.onrender.com"]
 
-CSRF_TRUSTED_ORIGINS=["https://protechmingles.onrender.com"]
+CSRF_TRUSTED_ORIGINS=["www.protechmingles.onrender.com"]
 
 
 # Application definition
