@@ -54,7 +54,7 @@ THIRD_PARTY_APPS = [
     "rest_framework.authtoken",
     "django_filters",
     'drf_yasg',
-    'whitenoise'
+    'whitenoise',
     'corsheaders'
 ]
 
