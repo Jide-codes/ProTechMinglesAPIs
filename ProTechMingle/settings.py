@@ -20,13 +20,13 @@ SECRET_KEY = os.environ.get("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "False").lower() == "true"
 
-# DEBUG = False
+# DEBUG = True
 
 # ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 ALLOWED_HOSTS = ["protechmingles.onrender.com", "localhost"]
 
-CSRF_TRUSTED_ORIGINS=["protechmingles.onrender.com"]
+CSRF_TRUSTED_ORIGINS=["https://protechmingles.onrender.com"]
 
 
 # Application definition
@@ -97,10 +97,12 @@ SIMPLE_JWT = {
     "SLIDING_TOKEN_REFRESH_LIFETIME": timedelta(days=90),
 }
 
-
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https://\w+\.example\.com$"
+]
 
 CORS_ALLOWED_ORIGINS =[
-    "http://local:8000"
+    "http://127.0.0.1:8000",
 ]
 
 
@@ -116,9 +118,9 @@ CORS_ALLOW_METHODS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "corsheaders.middleware.CorsMiddleware",
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -158,7 +160,7 @@ DATABASES = {
 }
 
 database_url = os.environ.get("DATABASE_URL")
-DATABASES["default"] = dj_database_url.parse(database_url)
+DATABASES["default"] = dj_database_url.parse("postgres://protechmingledb_dua2_user:i9B9xwVVfHc4ozXP44xyRiXK7vUOgmFn@dpg-cm62ur6n7f5s73e8clm0-a.oregon-postgres.render.com/protechmingledb_dua2")
 
 
 
